@@ -12,7 +12,7 @@ public class AppConfig {
     public static final String LOCAL_DEVELOPMENT_URL = "http://192.168.1.69:5000";
 
     // The public server URL for production (Deployment required)
-    public static final String PRODUCTION_URL = "https://p3-2anw.onrender.com"; // SUCCESSFUL PRODUCTION BACKEND
+    public static final String PRODUCTION_URL = "https://wastezero-project-e4p5.onrender.com"; // SUCCESSFUL PRODUCTION BACKEND
 
     public static final String BACKEND_URL = IS_DEVELOPMENT_MODE ? LOCAL_DEVELOPMENT_URL : PRODUCTION_URL;
 }
