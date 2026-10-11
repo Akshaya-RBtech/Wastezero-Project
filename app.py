@@ -26,7 +26,26 @@ init_firebase()
 
 # ── Secure configuration ──
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'wastezero-dev-secret-change-in-prod')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///hostel_waste.db')
+
+raw_db_url = (os.environ.get('DATABASE_URL') or '').strip().strip("'\"")
+if not raw_db_url:
+    database_uri = 'sqlite:///hostel_waste.db'
+elif raw_db_url.startswith('postgres://'):
+    database_uri = raw_db_url.replace('postgres://', 'postgresql://', 1)
+elif '://' not in raw_db_url:
+    database_uri = f'sqlite:///{raw_db_url}'
+else:
+    database_uri = raw_db_url
+
+# Verify valid SQLAlchemy URL, fallback safely to SQLite if malformed
+try:
+    from sqlalchemy.engine import make_url
+    make_url(database_uri)
+except Exception as e:
+    print(f"[Warning] Could not parse DATABASE_URL '{raw_db_url}': {e}. Falling back to default SQLite database.")
+    database_uri = 'sqlite:///hostel_waste.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
